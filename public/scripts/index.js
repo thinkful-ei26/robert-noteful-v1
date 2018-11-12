@@ -6,6 +6,7 @@ $(document).ready(function () {
 
   api.search({}, response => {
     store.notes = response;
+    console.log(store.currentSearchTerm);
     noteful.render();
   });
 

@@ -10,13 +10,16 @@ const app = express();
 app.use(express.static('public'));
 
 app.get('/api/notes', (req, res) => {
-  res.json(data);
-});
-
-app.get('/api/notes/:bookmarkId', (req, res) => { 
-  const bookmark = data.find(item => item.id === Number(req.params.bookmarkId));
-  String(bookmark.id); 
-  res.json(bookmark); 
+  //lets us retrieve the searchTerm from the query.string on req.query object
+  const searchTerm = req.query.searchTerm;
+  console.log(searchTerm);
+  //filter through the array from searchterm and return results
+  if (searchTerm) {
+    let filtered = data.filter(item => item.title.includes(searchTerm));
+    res.json(filtered);
+  } else {
+    res.json(data);
+  }
 });
 
 app.listen(8080, function () {
@@ -26,3 +29,4 @@ app.listen(8080, function () {
 });
 
 // INSERT EXPRESS APP CODE HERE...
+
