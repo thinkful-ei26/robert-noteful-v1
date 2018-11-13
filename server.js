@@ -9,7 +9,19 @@ const { PORT } = require('./config');
 
 const app = express();
 
+const logger = require('./middleware/logger.js');
+
 app.use(express.static('public'));
+
+app.use(logger);
+
+app.get('/api/notes/:id', (req, res) => {
+  const id = req.params.id;
+  let note = data.find(function(item) {
+    return item.id === Number(id);
+  });
+  res.json(note);
+});
 
 app.get('/api/notes', (req, res) => {
   //lets us retrieve the searchTerm from the query.string on req.query object
@@ -23,13 +35,6 @@ app.get('/api/notes', (req, res) => {
   }
 });
 
-app.get('/api/notes/:id', (req, res) => {
-  const id = req.params.id;
-  let note = data.find(function(item) {
-    return item.id === Number(id);
-  });
-  res.json(note);
-});
 
 app.listen(PORT, function () {
   console.info(`Server listening on ${this.address().port}`);  
