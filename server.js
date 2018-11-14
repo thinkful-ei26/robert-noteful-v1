@@ -15,6 +15,8 @@ const logger = require('./middleware/logger.js');
 
 app.use(express.static('public'));
 
+app.use(express.json());
+
 app.use(logger);
 
 app.get('/api/notes', (req, res, next) => {
@@ -30,10 +32,47 @@ app.get('/api/notes', (req, res, next) => {
 
 app.get('/api/notes/:id', (req, res) => {
   const id = req.params.id;
-  let note = data.find(function(item) {
-    return item.id === Number(id);
+
+  notes.find(id, (err, item) => {
+    if (err) {
+      return next(err);
+    }
+    if (item) {
+      res.json(item);
+    } else {
+      next();
+    }
   });
-  res.json(note);
+});
+
+app.put('/api/notes/:id', (req, res, next) => {
+  const id = req.params.id;
+
+  const updateObj = {};
+  const updateableFields = ['title', 'content'];
+
+  updateableFields.forEach(field => {
+    if (field in req.body) {
+      updateObj[field] = req.body[field];
+    }
+  });
+
+  if (!updateObj.title) {
+    const err = new Error('Missing `title` in request body');
+    err.status = 400;
+    return next(err);
+  }
+
+  notes.update(id, updateObj, (err, item) => {
+    if (err) {
+      return next(err);
+    }
+    if (item) {
+      res.json(item);
+    } else {
+      next();
+    }
+  });
 });
 
 // app.get('/api/notes', (req, res) => {
