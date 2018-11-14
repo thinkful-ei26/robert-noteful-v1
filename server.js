@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const morgan = require('morgan');
 // Load array of notes
 
 const data = require('./db/notes');
@@ -11,13 +12,15 @@ const { PORT } = require('./config');
 
 const app = express();
 
-const logger = require('./middleware/logger.js');
+// const logger = require('./middleware/logger.js');
 
 app.use(express.static('public'));
 
 app.use(express.json());
 
-app.use(logger);
+app.use(morgan('dev'));
+
+// app.use(logger);
 
 app.get('/api/notes', (req, res, next) => {
   const { searchTerm } = req.query;
